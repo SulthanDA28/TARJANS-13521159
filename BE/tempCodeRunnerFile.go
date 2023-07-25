@@ -1,0 +1,1 @@
+"A B\nB C\nC A\nC B\nB D\nD E\nE F\nF E"
