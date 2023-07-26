@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -11,7 +10,6 @@ import (
 )
 type Graph struct {
 	node map[string][]string
-	urut []string
 }
 
 func NewGraph() *Graph {
@@ -29,18 +27,12 @@ func stringToMatrix(input string) [][]string {
 	}
 	return matrix
 }
-func (g *Graph) PrintEdges() {
-	for node, neighbors := range g.node {
-		fmt.Println(node, ":", neighbors)
-	}
-}
 
 func matrixtoGraph(matrix [][]string) Graph {
 	graph := NewGraph()
 	for i := 0; i < len(matrix); i++ {
 		graph.addEdge(matrix[i][0], matrix[i][1])
 	}
-	graph.urut = matrixtoarr(matrix)
 	return *graph
 }
 func stringToGraph(input string) Graph {
@@ -56,51 +48,32 @@ func minint(i1, i2 int) int {
 	return i2
 }
 
-func matrixtoarr(matrix [][]string) []string {
-	var arr []string
-	unique := make(map[string]bool)
-	for i := 0; i < len(matrix); i++ {
-		for j := 0; j < len(matrix[i]); j++ {
-			unique[matrix[i][j]] = false
-		}
-	}
-	for i := 0; i < len(matrix); i++ {
-		for j := 0; j < len(matrix[i]); j++ {
-			if(unique[matrix[i][j]] == false){
-				arr = append(arr, matrix[i][j])
-				unique[matrix[i][j]] = true
-			}
-		}
-	}
-
-	return arr
-}
 
 func (g *Graph) TarjanSCC() [][]string {
 	var (
 		indeks int
 		stack []string
-		indices = make(map[string]int)
+		id = make(map[string]int)
 		minim = make(map[string]int)
 		onStack = make(map[string]bool)
 		hasil [][]string
 		findSCC func(string)
 	)
 	findSCC = func(v string) {
-		indices[v] = indeks
+		id[v] = indeks
 		minim[v] = indeks
 		indeks++
 		stack = append(stack, v)
 		onStack[v] = true
 		for _, neigbor := range g.node[v] {
-			if indices[neigbor] < 0 {
+			if id[neigbor] < 0 {
 				findSCC(neigbor)
 				minim[v] = minint(minim[v], minim[neigbor])
 			} else if onStack[neigbor] {
-				minim[v] = minint(minim[v], indices[neigbor])
+				minim[v] = minint(minim[v], id[neigbor])
 			}
 		}
-		if minim[v] == indices[v] {
+		if minim[v] == id[v] {
 			var scc []string
 			for {
 				pop := stack[len(stack)-1]
@@ -115,10 +88,10 @@ func (g *Graph) TarjanSCC() [][]string {
 		}
 	}
 	for v := range g.node {
-		indices[v] = -1
+		id[v] = -1
 	}
 	for v := range g.node {
-		if indices[v] < 0 {
+		if id[v] < 0 {
 			findSCC(v)
 		}
 	}
@@ -128,7 +101,7 @@ func (g *Graph) TarjanSCC() [][]string {
 func (g *Graph) TarjanBridge() [][]string {
 	var(
 		visited = make(map[string]bool)
-		indices = make(map[string]float64)
+		id = make(map[string]float64)
 		minim = make(map[string]float64)
 		parent = make(map[string]string)
 		hasil [][]string
@@ -137,32 +110,26 @@ func (g *Graph) TarjanBridge() [][]string {
 	)
 	findBridge = func(v string) {
 		visited[v] = true
-		indices[v] = float64(indeks)
-		minim[v] = float64(indeks)
+		id[v] = float64(indeks)
+		minim[v] = float64(indeks)//low-link
 		indeks++
 		for _, neighbor := range g.node[v] {
 			if !visited[neighbor] {
 				parent[neighbor] = v
 				findBridge(neighbor)
 				minim[v] = min(minim[v], minim[neighbor])
-				if minim[neighbor] > indices[v] {
+				if minim[neighbor] > id[v] {
 					hasil = append(hasil, []string{v, neighbor})
 				}
 			} else if neighbor != parent[v] {
-				minim[v] = min(minim[v], indices[neighbor])
+				minim[v] = min(minim[v], id[neighbor])
 			}
 		}
 	}
 	for v := range g.node {
-		visited[v] = false
-		indices[v] = math.Inf(1)
-		minim[v] = math.Inf(1)
-		parent[v] = ""
-	}
-	for v := range g.node {
 		for v := range g.node {
 			visited[v] = false
-			indices[v] = math.Inf(1)
+			id[v] = math.Inf(1)
 			minim[v] = math.Inf(1)
 			parent[v] = ""
 		}
@@ -225,7 +192,7 @@ func (g *Graph) ubahhasilBridge() []jsonhasil{
 	}
 	var hasilbridge [][]string
 	for k := range hasililangduplicat {
-		if hilangduplikatmatrix[[2]string{hasililangduplicat[k][0], hasililangduplicat[k][1]}] == false {
+		if !hilangduplikatmatrix[[2]string{hasililangduplicat[k][0], hasililangduplicat[k][1]}] {
 			hasilbridge = append(hasilbridge, hasililangduplicat[k])
 			hilangduplikatmatrix[[2]string{hasililangduplicat[k][0], hasililangduplicat[k][1]}] = true
 			hilangduplikatmatrix[[2]string{hasililangduplicat[k][1], hasililangduplicat[k][0]}] = true
