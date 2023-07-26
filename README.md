@@ -27,7 +27,7 @@ Algoritma Tarjan adalah algoritma dalam teori graf yang digunakan untuk menemuka
 ### Kompleksitas Algoritma Tarjan's
 Algoritma Tarjan's sendiri bekerja dengan menggunakan teknik rekursif yang biasa digunakan dalam graph, yaitu DFS (Depth First Search). DFS sendiri merupakan algoritma pencarian yang mendalam sebuah graph/pohon, mengikuti salah satu cabang graph/pohon hingga menemukan solusi. Karena algoritma Tarjan's ini menggunakan DFS, sehingga kompleksitas dari algoritma ini adalah O(E + V) dimana E adalah edges dan V adalah vertices(simpul).
 ### Modifikasi Algoritma Tarjan's pada Pencarian Bridges
-Untuk pencarian bridges pada sebuah graph dengan menggunakan algoritma Tarjan's sebenarnya hampir sama dengan penggunaan algoritma Tarjan's dalam pencarian SCC. Kita tetap menggunakan variabel low-link untuk mengetahui apakah ada bridge atau tidak. Namun ada perbedaan sedikit pada pencarian bridges. Perbedaan tersebut adalah yang pertama tentunya tidak memakai stack, tetapi kita memakai acuan parent untuk membatasi rekursif. Apabila node yang kita cek bukan parent dari tetangga dari node yang kita cek, maka kita update nilai low-link dari node yang kita cek dengan nilai minimum dari low-link dari node yang dicek dengan id tetangga. Jika nilai low-link tetangga yang bernilai lebih dari id dari simpul tersebut, maka simpul tersebut adalah bridge. Jika tidak, maka simpul tersebut bukan bridge.
+Untuk pencarian bridges pada sebuah graph dengan menggunakan algoritma Tarjan's sebenarnya hampir sama dengan penggunaan algoritma Tarjan's dalam pencarian SCC. Kita tetap menggunakan variabel low-link untuk mengetahui apakah ada bridge atau tidak. Namun ada perbedaan sedikit pada pencarian bridges. Perbedaan tersebut adalah yang pertama tentunya tidak memakai stack, tetapi kita memakai acuan parent untuk membatasi rekursif atau apabila node yang dicek tidak memiliki tetangga lagi. Apabila node yang kita cek bukan parent dari tetangga dari node yang kita cek (back edge), maka kita update nilai low-link dari node yang kita cek dengan nilai minimum dari low-link dari node yang dicek dengan id tetangga. Untuk menentukan apakah edge merupakan bridge dengan cara melihat apakah nilai low-link tetangga dari node yang kita cek bernilai lebih dari id dari node yang kita cek atau tidak. Jika iya, maka edge tersebut adalah bridge. Jika tidak, maka edge tersebut bukan bridge.
 ### Jenis Edges Yang Ada Pada Graph
  - Back Edge
 
@@ -44,6 +44,8 @@ Untuk pencarian bridges pada sebuah graph dengan menggunakan algoritma Tarjan's 
  - Algoritma Tarjans Bridge
 
    https://www.geeksforgeeks.org/bridge-in-a-graph/
+
+   https://youtu.be/Rhxs4k6DyMM
 
  - Framework React
 
